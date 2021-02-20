@@ -21,6 +21,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         val users = mutableListOf<User>()
+        public fun searchUser(username: String) : User? {
+            users.forEach {
+                if(it.username == username)
+                    return it
+            }
+            return null
+        }
     }
 
 
@@ -96,15 +103,6 @@ class MainActivity : AppCompatActivity() {
                 notify("This user does not exist")
             }
         }
-
-    }
-
-    private fun searchUser(username: String) : User? {
-        users.forEach {
-            if(it.username == username)
-                return it
-        }
-        return null
     }
 
     private fun notify(message : String){
