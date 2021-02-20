@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        promptInfo = BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint method").setSubtitle("Your security at the finger point").setNegativeButtonText("Use practicality").build()
+        promptInfo = BiometricPrompt.PromptInfo.Builder().setTitle("Biometric login for ORBiometry App").setSubtitle("Log in using your biometric credential").setNegativeButtonText("Cancel").build()
 
         val btn_fp = findViewById<ImageView>(R.id.btn_fingerprint)
 
@@ -72,29 +72,31 @@ class MainActivity : AppCompatActivity() {
     public fun authentication(view: View){
         val username = findViewById<TextView>(R.id.username_login)
         val password = findViewById<TextView>(R.id.password_login)
-        val user: User? = searchUser(username.text.toString())
-
-        if(user != null){
-            if(User.authenticate(user, username.text.toString(), password.text.toString())){
-                if(!user.logged && !User.usedFingerprint){
-                    user.logged = true
-                    user.fingerPrintPermission = true
-                    User.usedFingerprint = true
-                } else if(!user.logged && User.usedFingerprint){
-                    user.logged = true
-                }
-                notify("Login successful")
-                val control_page_admin = Intent(this, HomeActivity::class.java)
-                startActivity(control_page_admin)
-                finish()
-            } else if(username.text.toString().equals("") || password.text.toString().equals("")){
-                notify("Username or password is empty! ")
-            } else{
-                notify("Incorrect username or password!")
-            }
+        if(username.text.toString().equals("") || password.text.toString().equals("")){
+            notify("Username or password is empty! ")
         } else{
-            notify("This user does not exist")
+            val user: User? = searchUser(username.text.toString())
+            if(user != null){
+                if(User.authenticate(user, username.text.toString(), password.text.toString())){
+                    if(!user.logged && !User.usedFingerprint){
+                        user.logged = true
+                        user.fingerPrintPermission = true
+                        User.usedFingerprint = true
+                    } else if(!user.logged && User.usedFingerprint){
+                        user.logged = true
+                    }
+                    notify("Login successful")
+                    val control_page_admin = Intent(this, HomeActivity::class.java)
+                    startActivity(control_page_admin)
+                    finish()
+                } else{
+                    notify("Incorrect username or password!")
+                }
+            } else{
+                notify("This user does not exist")
+            }
         }
+
     }
 
     private fun searchUser(username: String) : User? {
