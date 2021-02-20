@@ -8,6 +8,19 @@
     tools:context=".MainActivity"
     >
 
+    <Button
+        android:id="@+id/btn_signup_main"
+        android:layout_width="210dp"
+        android:layout_height="40dp"
+        android:onClick="signup"
+        android:text="Sign Up"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        app:layout_constraintVertical_bias="0.033" />
+
     <EditText
         android:id="@+id/username_login"
         android:layout_width="wrap_content"
@@ -70,8 +83,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login"
-        app:layout_constraintVertical_bias="0.085"
+        app:layout_constraintTop_toBottomOf="@+id/btn_signup_main"
+        app:layout_constraintVertical_bias="0.066"
         app:srcCompat="@mipmap/fingerprint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

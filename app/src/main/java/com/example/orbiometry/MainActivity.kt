@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import model.entities.User
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
@@ -18,9 +19,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
 
+    companion object{
+        val users = mutableListOf<User>()
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        users.add(User("admin","admin"))
+        users.add(User("guest", "guest"))
 
         executor = ContextCompat.getMainExecutor(this@MainActivity)
         biometricPrompt = BiometricPrompt(this@MainActivity, executor, object : BiometricPrompt.AuthenticationCallback(){
@@ -46,24 +54,55 @@ class MainActivity : AppCompatActivity() {
         val btn_fp = findViewById<ImageView>(R.id.btn_fingerprint)
 
         btn_fp.setOnClickListener {
-            biometricPrompt.authenticate(promptInfo)
+            val username = findViewById<TextView>(R.id.username_login)
+            val user: User? = searchUser(username.text.toString())
+            if(user != null){
+                if(user.logged && User.usedFingerprint && user.fingerPrintPermission && user.username == username.text.toString()){
+                    biometricPrompt.authenticate(promptInfo)
+                }
+            }
         }
+    }
+
+    public fun signup(view: View){
+        startActivity(Intent(this, RegisterActivity::class.java))
+        finish()
     }
 
     public fun authentication(view: View){
         val username = findViewById<TextView>(R.id.username_login)
         val password = findViewById<TextView>(R.id.password_login)
+        val user: User? = searchUser(username.text.toString())
 
-        if(username.text.toString().equals("admin") && password.text.toString().equals("admin")){
-            notify("Login successful")
-            val control_page_admin = Intent(this, HomeActivity::class.java)
-            startActivity(control_page_admin)
-            finish()
-        } else if(username.text.toString().equals("") || password.text.toString().equals("")){
-            notify("Username or password is empty! ")
+        if(user != null){
+            if(User.authenticate(user, username.text.toString(), password.text.toString())){
+                if(!user.logged && !User.usedFingerprint){
+                    user.logged = true
+                    user.fingerPrintPermission = true
+                    User.usedFingerprint = true
+                } else if(!user.logged && User.usedFingerprint){
+                    user.logged = true
+                }
+                notify("Login successful")
+                val control_page_admin = Intent(this, HomeActivity::class.java)
+                startActivity(control_page_admin)
+                finish()
+            } else if(username.text.toString().equals("") || password.text.toString().equals("")){
+                notify("Username or password is empty! ")
+            } else{
+                notify("Incorrect username or password!")
+            }
         } else{
-            notify("Incorrect username or password!")
+            notify("This user does not exist")
         }
+    }
+
+    private fun searchUser(username: String) : User? {
+        users.forEach {
+            if(it.username == username)
+                return it
+        }
+        return null
     }
 
     private fun notify(message : String){
