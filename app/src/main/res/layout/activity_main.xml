@@ -12,7 +12,7 @@
         android:id="@+id/btn_signup_main"
         android:layout_width="210dp"
         android:layout_height="40dp"
-        android:onClick="signup"
+        android:onClick="signUp"
         android:text="Sign Up"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
